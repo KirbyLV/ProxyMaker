@@ -6,7 +6,11 @@ import json
 import re
 import tkinter
 import tkinter.filedialog
+import tkinter.messagebox
+import tkinter.ttk
 import customtkinter
+import threading
+from time import sleep
 
 # Window Setup
 customtkinter.set_appearance_mode("Dark")
@@ -28,10 +32,24 @@ optionFrame.grid(row=2, column=0, padx=10, pady=10, sticky="NSEW")
 execFrame = customtkinter.CTkFrame(master=root)
 execFrame.grid(row = 3, column = 0, padx = 10, pady = 10, sticky = "NSEW")
 
-#footerFrame = customtkinter.CTkFrame(master=root)
-#footerFrame.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = "SEW")
+footerFrame = customtkinter.CTkFrame(master=root)
+footerFrame.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = "SEW")
 
 #endregion
+
+#Define progress popup
+progressBar = customtkinter.CTkProgressBar(master=footerFrame, orientation = "horizontal", width=30, height=30, mode="indeterminate")
+progressLabel = customtkinter.CTkLabel(master=footerFrame, text="Creating Proxies...")
+progressBar.pack()
+progressBar.set(0)
+
+    #tkinter progress bar
+'''tkprogress = tkinter.ttk.Progressbar(master=footerFrame, orient="horizontal", length=300, mode="indeterminate")
+tkprogress['value'] = 0
+tkprogress.pack()
+def progressStart():
+    if tkprogress['value'] < 100:
+        tkprogress['value'] += 20'''
 
 # POINT YOUR DIRECTORY to sources and proxy destination
 contentSource = tkinter.StringVar()
@@ -51,14 +69,24 @@ def depotBrowseButton():
 
 #Proxy creator function
 def createProxies(content_directory, proxy_depot):
-    for file in os.listdir(content_directory):
-        filename = os.fsdecode(file)
-        if filename.endswith('.mov'):
-            file_path = os.path.join(content_directory, file)
-            print(f"step 1 File path: {file_path}")
-            createProxy(file_path, proxy_depot)
-
+    #progress_popup
+    progressLabel.pack()
+    progressLabel.configure(text="Creating Proxies...")
+    progressBar.start()
+    ##tkprogress.start()
+    #tkinter.messagebox.showinfo(title="Proxy Maker", message="Creating Proxies...")
+    for dirpath, dirnames, filenames in os.walk(content_directory):
+        for filename in filenames:
+            #filename = os.fsdecode(file)
+            if filename.endswith('.mov'):
+                file_path = os.path.join(dirpath, filename)
+                print(f"step 1 File path: {file_path}")
+                createProxy(file_path, proxy_depot)
     print("Finished processing files")
+    progressLabel.configure(text="Proxies Completed")
+    progressBar.stop()
+    progressBar.set(1)
+    
 
 def createProxy(file_path, proxy_depot):
     try:
@@ -78,7 +106,9 @@ def createProxy(file_path, proxy_depot):
         subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
         
     except Exception as e:
-        print(f"Error creating proxy for file '{file_path}': {str(e)}")
+        errorText = f"Error creating proxy for file '{file_path}': {str(e)}"
+        tkinter.messagebox.showwarning(title="Encoding Error", )
+        print(errorText)
 
 def proxyMakerButton():
     sourceDir = contentSource.get()
