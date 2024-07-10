@@ -75,7 +75,7 @@ def createProxy(file_path, proxy_depot):
         cmd = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
         
         print(f"command: {cmd}")
-        #subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
+        subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
         
     except Exception as e:
         print(f"Error creating proxy for file '{file_path}': {str(e)}")
