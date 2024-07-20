@@ -8,6 +8,7 @@ import json
 import re
 import tkinter
 import tkinter.filedialog
+import tkinter.ttk
 import customtkinter
 
 # Window Setup
@@ -37,10 +38,19 @@ tableFrame.grid(row=4, column=0, padx = 10, pady = 10, sticky = "NSEW")
 #footerFrame.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = "SEW")
 
 #Table Setup
-tableHeaders = ["File Name", "Proxy Level", "Proxy Location"]
-for col, header in enumerate(tableHeaders):
-    colLabel = tkinter.Label(master=tableFrame, text=header, font=("Arial", 12, "bold"))
-    colLabel.grid(row=0, column=col, padx=10, pady=5)
+columns = ["#1", "#2", "#3"]
+tree = tkinter.ttk.Treeview(master=tableFrame, columns=columns, show="headings")
+tree.pack(fill="both", expand=True)
+tree.heading("#1", text="File Name")
+tree.heading("#2", text="Proxy Level")
+tree.heading("#3", text="Proxy Location")
+
+tree.column("#1", width=150)
+tree.column("#2", width=50)
+tree.column("#3", width=300)
+
+def add_table_data(data):
+    tree.insert("", tkinter.END, values=data)
 
 #endregion
 
@@ -91,16 +101,11 @@ def createProxy(file_path, proxy_depot):
         if platform.system() == "Windows":
             subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
 
-        '''
-        tableData = [file_name, resFactor, proxy_path]
-        columnWidths = [100, 50, 200]
-        for row, row_data in enumerate(tableData, start=1):
-            for col, value in enumerate(row_data):
-                tableEntry = customtkinter.CTkEntry(master=tableFrame, width=columnWidths[col])
-                tableEntry.insert(tkinter.END, value)
-                tableEntry.grid(row = row, column = col, padx = 10, pady = 5)
         
-        '''
+        tableData = (file_name, resFactor, proxy_path)
+        add_table_data(tableData)
+        
+        
     except Exception as e:
         print(f"Error creating proxy for file '{file_path}': {str(e)}")
 
