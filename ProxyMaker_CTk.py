@@ -2,6 +2,8 @@
 
 import os
 import subprocess
+import platform
+import shlex
 import json
 import re
 import tkinter
@@ -28,8 +30,17 @@ optionFrame.grid(row=2, column=0, padx=10, pady=10, sticky="NSEW")
 execFrame = customtkinter.CTkFrame(master=root)
 execFrame.grid(row = 3, column = 0, padx = 10, pady = 10, sticky = "NSEW")
 
+tableFrame = customtkinter.CTkFrame(master=root)
+tableFrame.grid(row=4, column=0, padx = 10, pady = 10, sticky = "NSEW")
+
 #footerFrame = customtkinter.CTkFrame(master=root)
 #footerFrame.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = "SEW")
+
+#Table Setup
+tableHeaders = ["File Name", "Proxy Level", "Proxy Location"]
+for col, header in enumerate(tableHeaders):
+    colLabel = tkinter.Label(master=tableFrame, text=header, font=("Arial", 12, "bold"))
+    colLabel.grid(row=0, column=col, padx=10, pady=5)
 
 #endregion
 
@@ -70,13 +81,26 @@ def createProxy(file_path, proxy_depot):
         print(f"Proxy Name: {proxy_file_name}")
         proxy_path = os.path.join(proxy_depot, proxy_file_name)
         print(f"Proxy path: {proxy_path}")
-        
 
         cmd = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
-        
+
         print(f"command: {cmd}")
-        subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
+        if platform.system() == "Darwin":
+            args = shlex.split(cmd)
+            subprocess.run(args, check=True, stderr=subprocess.PIPE)
+        if platform.system() == "Windows":
+            subprocess.run(cmd, check=True, stderr=subprocess.PIPE)
+
+        '''
+        tableData = [file_name, resFactor, proxy_path]
+        columnWidths = [100, 50, 200]
+        for row, row_data in enumerate(tableData, start=1):
+            for col, value in enumerate(row_data):
+                tableEntry = customtkinter.CTkEntry(master=tableFrame, width=columnWidths[col])
+                tableEntry.insert(tkinter.END, value)
+                tableEntry.grid(row = row, column = col, padx = 10, pady = 5)
         
+        '''
     except Exception as e:
         print(f"Error creating proxy for file '{file_path}': {str(e)}")
 
