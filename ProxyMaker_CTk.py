@@ -72,12 +72,12 @@ def depotBrowseButton():
 
 #Proxy creator function
 def createProxies(content_directory, proxy_depot):
-    for file in os.listdir(content_directory):
-        filename = os.fsdecode(file)
-        if filename.endswith('.mov'):
-            file_path = os.path.join(content_directory, file)
-            print(f"step 1 File path: {file_path}")
-            createProxy(file_path, proxy_depot)
+    for dirpath, dirnames, filenames in os.walk(content_directory):
+        for filename in filenames:
+            if filename.endswith('.mov'):
+                file_path = os.path.join(dirpath, filename)
+                print(f"step 1 File path: {file_path}")
+                createProxy(file_path, proxy_depot)
 
     print("Finished processing files")
 
