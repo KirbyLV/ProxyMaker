@@ -2,6 +2,7 @@
 FFMPEG proxy maker specifically formatted for Disguise proxies
 
 # Requirements
+NOTE: There can be no spaces in the file name, including folder directory.
 Requires ffmpeg and python3 installed
 Requires ffmpeg callable in command line via "ffmpeg"
 Requires tkinter, which should be installed as a standard dependency of python
