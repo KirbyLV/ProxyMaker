@@ -8,6 +8,7 @@ import json
 import re
 import tkinter
 import tkinter.filedialog
+import tkinter.messagebox
 import tkinter.ttk
 import customtkinter
 
@@ -58,6 +59,9 @@ def add_table_data(data):
 contentSource = tkinter.StringVar()
 proxyDepot = tkinter.StringVar()
 proxyRes = tkinter.StringVar()
+alphaEnable = tkinter.StringVar()
+errorString = tkinter.StringVar()
+errorString.set("Proxies Created")
 
 #Folder Dialog Buttons
 def directoryBrowseButton():
@@ -92,7 +96,12 @@ def createProxy(file_path, proxy_depot):
         proxy_path = os.path.join(proxy_depot, proxy_file_name)
         print(f"Proxy path: {proxy_path}")
 
-        cmd = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
+        hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
+        hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha ' + proxy_path
+        if alphaEnable == "Yes":
+            cmd = hapAlpha
+        else:
+            cmd = hapNoAlpha
 
         print(f"command: {cmd}")
         if platform.system() == "Darwin":
@@ -108,17 +117,20 @@ def createProxy(file_path, proxy_depot):
         
     except Exception as e:
         print(f"Error creating proxy for file '{file_path}': {str(e)}")
+        errorString.set(f"Error creating proxy for file '{file_path}': {str(e)}")
 
 def proxyMakerButton():
     sourceDir = contentSource.get()
     proxyDir = proxyDepot.get()
     createProxies(sourceDir, proxyDir)
+    tkinter.messagebox.showinfo(title="Complete", message= errorString.get())
 
 #region Window elements
 headerLabel = customtkinter.CTkLabel(master=headerFrame, text="Proxy Maker")
 contentLabel =customtkinter.CTkLabel(master=frame, text="Content Directory:")
 depotLabel = customtkinter.CTkLabel(master=frame, text="Proxy Storage Location:")
 resLabel = customtkinter.CTkLabel(master=optionFrame, text="Proxy Level:")
+alphaLabel = customtkinter.CTkLabel(master=optionFrame, text="Need Alpha:")
 
 headerLabel.pack(anchor="n")
 contentLabel.grid(row=1, column=0, sticky="e")
@@ -135,10 +147,18 @@ dirButton1.grid(row=1, column=2)
 dirButton2 = customtkinter.CTkButton(master=frame, text="Browse", command=depotBrowseButton, width=40)
 dirButton2.grid(row=2, column=2)
 
-resLabel.grid(row=3, column=1, sticky="e")
+resLabel.grid(row=3, column=1, sticky="e", padx = "2")
 proxyRes.set("2")
 resDropdown = customtkinter.CTkOptionMenu(master=optionFrame, values=["2", "4"], variable=proxyRes)
 resDropdown.grid(row=3, column=2, sticky="w")
+
+spacerLabel = customtkinter.CTkLabel(master=optionFrame, text="       ")
+spacerLabel.grid(row=3, column=3)
+
+alphaLabel.grid(row=3, column=4, sticky="e", padx = "2")
+alphaEnable.set("No")
+alphaDropdown = customtkinter.CTkOptionMenu(master=optionFrame, values=["No", "Yes"], variable=alphaEnable)
+alphaDropdown.grid(row=3, column=5, sticky="w")
 
 execButton = customtkinter.CTkButton(master=execFrame, text="Create Proxies",command=proxyMakerButton, width=80)
 execButton.pack(anchor="center")
