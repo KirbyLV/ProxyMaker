@@ -96,8 +96,15 @@ def createProxy(file_path, proxy_depot):
         proxy_path = os.path.join(proxy_depot, proxy_file_name)
         print(f"Proxy path: {proxy_path}")
 
-        hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
-        hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha ' + proxy_path
+        if platform.system() == "Windows":
+            file_path = os.path.abspath(file_path)
+            proxy_path = os.path.abspath(proxy_path)
+            hapNoAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap "' + proxy_path + '"'
+            hapAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha "' + proxy_path + '"'
+        if platform.system() == "Darwin":
+            hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
+            hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha ' + proxy_path
+
         if alphaEnable.get() == "Yes":
             cmd = hapAlpha
         else:
