@@ -96,8 +96,8 @@ def createProxy(file_path, proxy_depot):
         proxy_path = os.path.join(proxy_depot, proxy_file_name)
         print(f"Proxy path: {proxy_path}")
 
-        hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
-        hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha ' + proxy_path
+        hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -acodec pcm_s16le ' + proxy_path
+        hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha -acodec pcm_s16le ' + proxy_path
         if alphaEnable.get() == "Yes":
             cmd = hapAlpha
         else:
