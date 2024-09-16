@@ -99,8 +99,8 @@ def createProxy(file_path, proxy_depot):
         if platform.system() == "Windows":
             file_path = os.path.abspath(file_path)
             proxy_path = os.path.abspath(proxy_path)
-            hapNoAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap "' + proxy_path + '"'
-            hapAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha "' + proxy_path + '"'
+            hapNoAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -acodec pcm_s16le "' + proxy_path + '"'
+            hapAlpha = 'ffmpeg -i "' + file_path + '" -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha -acodec psm_s16le "' + proxy_path + '"'
         if platform.system() == "Darwin":
             hapNoAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap ' + proxy_path
             hapAlpha = 'ffmpeg -i ' + file_path + ' -vf "scale=iw/' + resFactor + ':ih/' + resFactor + '" -c:v hap -format hap_alpha ' + proxy_path
