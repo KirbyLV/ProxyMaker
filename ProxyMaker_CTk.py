@@ -149,7 +149,7 @@ dirButton2.grid(row=2, column=2)
 
 resLabel.grid(row=3, column=1, sticky="e", padx = "2")
 proxyRes.set("2")
-resDropdown = customtkinter.CTkOptionMenu(master=optionFrame, values=["2", "4"], variable=proxyRes)
+resDropdown = customtkinter.CTkOptionMenu(master=optionFrame, values=["1", "2", "4"], variable=proxyRes)
 resDropdown.grid(row=3, column=2, sticky="w")
 
 spacerLabel = customtkinter.CTkLabel(master=optionFrame, text="       ")
